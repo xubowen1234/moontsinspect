@@ -6,7 +6,7 @@ test "JSON preserves offsets beyond JS safe integer range and unknown PID" {
     "type": "issue",
     "code": "test",
     "offset": "9007199254740993",
-    "pid": (None : Int?).to_json(),
+    "pid": Json::null(),
   })
   let j = event_json(
     MediaClock(pid=256, offset=188L, {
@@ -55,4 +55,16 @@ test "summary JSON reflects real program maps" {
     ],
   }
   assert_eq(i.summary_json(), expected)
+}
+
+///|
+test "present diagnostic PID is a scalar and missing timestamps are JSON null" {
+  assert_eq(event_json(Issue(fault("test", 188L, Some(256)))), {
+    "schema": 1,
+    "type": "issue",
+    "code": "test",
+    "offset": "188",
+    "pid": 256,
+  })
+  assert_eq(optional_ticks(None), Json::null())
 }

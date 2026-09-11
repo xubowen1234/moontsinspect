@@ -1,0 +1,19 @@
+{
+  "generator": "FFmpeg 8.1",
+  "date": "2026-09-11",
+  "sha256": "94b30a1495470daa1be1523a26dcdc52b3bf6d68cfc3fe1d5b015a256d9b08bd",
+  "program": 7,
+  "pmt_pid": 4096,
+  "pcr_pid": 256,
+  "streams": [
+    {
+      "pid": 256,
+      "stream_type": 2
+    },
+    {
+      "pid": 257,
+      "stream_type": 3
+    }
+  ],
+  "note": "Run scripts/crosscheck.cjs to compare actual FFprobe packet timestamps; static metadata alone is not verification."
+}

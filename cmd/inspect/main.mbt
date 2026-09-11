@@ -1,4 +1,5 @@
 // Host boundary only: file IO and exit codes. All TS inspection lives in MoonBit.
+
 ///|
 extern "js" fn open_file(path : String) -> Int =
   #| (path) => { try { return require('node:fs').openSync(path, 'r'); }

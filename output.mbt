@@ -33,7 +33,7 @@ fn pmt_json(p : Pmt) -> Json {
 fn optional_ticks(value : Int64?) -> Json {
   match value {
     Some(t) => t.to_string().to_json()
-    None => (None : Int?).to_json()
+    None => Json::null()
   }
 }
 
@@ -47,7 +47,10 @@ pub fn event_json(event : InspectEvent) -> Json {
         "type": "issue",
         "code": e.code,
         "offset": e.offset.to_string(),
-        "pid": e.pid.to_json(),
+        "pid": match e.pid {
+          Some(pid) => pid.to_json()
+          None => Json::null()
+        },
       }
     ProgramsChanged(refs) =>
       {
