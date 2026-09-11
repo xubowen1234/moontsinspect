@@ -1,0 +1,7 @@
+/_build/
+/target/
+/.mooncakes/
+/.moon-lock/
+*.exe
+*.obj
+/docs/competition/application*.md

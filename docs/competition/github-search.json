@@ -1,0 +1,52 @@
+[
+  {
+    "q": "MoonBit mpeg",
+    "url": "https://api.github.com/search/repositories?q=MoonBit%20mpeg&per_page=100",
+    "status": 200,
+    "body": {
+      "total_count": 0,
+      "incomplete_results": false,
+      "items": []
+    }
+  },
+  {
+    "q": "MoonBit transport stream",
+    "url": "https://api.github.com/search/repositories?q=MoonBit%20transport%20stream&per_page=100",
+    "status": 200,
+    "body": {
+      "total_count": 0,
+      "incomplete_results": false,
+      "items": []
+    }
+  },
+  {
+    "q": "MoonBit demux",
+    "url": "https://api.github.com/search/repositories?q=MoonBit%20demux&per_page=100",
+    "status": 200,
+    "body": {
+      "total_count": 0,
+      "incomplete_results": false,
+      "items": []
+    }
+  },
+  {
+    "q": "mpegts language:MoonBit",
+    "url": "https://api.github.com/search/repositories?q=mpegts%20language%3AMoonBit&per_page=100",
+    "status": 200,
+    "body": {
+      "total_count": 0,
+      "incomplete_results": false,
+      "items": []
+    }
+  },
+  {
+    "q": "mpeg language:MoonBit",
+    "url": "https://api.github.com/search/repositories?q=mpeg%20language%3AMoonBit&per_page=100",
+    "status": 200,
+    "body": {
+      "total_count": 0,
+      "incomplete_results": false,
+      "items": []
+    }
+  }
+]

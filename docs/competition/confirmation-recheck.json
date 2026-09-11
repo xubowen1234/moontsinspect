@@ -1,0 +1,150 @@
+[
+  {
+    "term": "mpegts",
+    "url": "https://mooncakes.io/api/v0/search?kw=mpegts&limit=100",
+    "status": 200,
+    "body": []
+  },
+  {
+    "term": "mpeg-ts",
+    "url": "https://mooncakes.io/api/v0/search?kw=mpeg-ts&limit=100",
+    "status": 200,
+    "body": []
+  },
+  {
+    "term": "MoonTSInspect",
+    "url": "https://mooncakes.io/api/v0/search?kw=MoonTSInspect&limit=100",
+    "status": 200,
+    "body": [
+      {
+        "name": "alicedhaha/moonrcinspect",
+        "version": "0.2.1",
+        "yanked": false,
+        "yanked_reason": null,
+        "license": "MIT",
+        "repository": "https://github.com/alicedhaha/RCInspect",
+        "keywords": [
+          "eda",
+          "spef",
+          "parasitics",
+          "rc-network",
+          "signal-integrity"
+        ],
+        "description": "MoonBit-native SPEF parasitic RC network parser, analyzer, auditor, and visualizer",
+        "is_new": false,
+        "created_at": "2026-08-24T13:13:36.925055",
+        "downloads": 5,
+        "matched_package_count": 15,
+        "matched_packages": [
+          {
+            "package": "",
+            "name": "alicedhaha/moonrcinspect",
+            "summary": "MoonRCInspect 是一个 MoonBit 原生的 SPEF 寄生 RC 网络解析、分析、审计与可视化工具。它提供网络统计、连通性检查、Elmore 延迟、数据质量审计、路径分析、电阻矩阵、耦合分析和 RC 降阶等特性，支持 JSON、Graphviz DOT、CSV、SARIF 等多种输出格式。\n\nKeywords: SPEF, RC网络, 寄生参数, 解析, 分析, 审计, 可视化, Elmore延迟, 路径分析, 电阻矩阵, 耦合电容, 降阶, CLI, MoonBit, 数据质量",
+            "summary_version": "0.2.1",
+            "is_summary_current": true,
+            "summary_fragments": [
+              {
+                "text": "MoonRCInspect",
+                "matched": true
+              },
+              {
+                "text": " 是一个 MoonBit 原生的 SPEF 寄生 RC 网络解析、分析、审计与可视化工具。它提供网络统计、连通性检查、Elmore 延迟、数据质量审计、路径分析、电阻矩阵、耦合分析和 RC 降阶等特性，支持 JSON、Graphviz DOT、CSV、SARIF 等多种输出格式。\n\nKeywords: SPEF, RC网络, 寄生参数, 解析, 分析, 审计, 可视化, Elmore延迟, 路径分析, 电阻矩阵, 耦合电容, 降阶, CLI, MoonBit, 数据质量",
+                "matched": false
+              }
+            ]
+          },
+          {
+            "package": "cmd/moonrc",
+            "name": "alicedhaha/moonrcinspect/cmd/moonrc",
+            "summary": "The package is part of the moonrcinspect module and contains no README or documented public API; no types, values, traits, or errors are exposed.\n\nKeywords: moonrc, moonrcinspect, cmd/moonrc, alicedhaha, empty API, no public API",
+            "summary_version": "0.2.1",
+            "is_summary_current": true,
+            "summary_fragments": [
+              {
+                "text": "The package is part of the ",
+                "matched": false
+              },
+              {
+                "text": "moonrcinspect",
+                "matched": true
+              },
+              {
+                "text": " module and contains no README or documented public API; no types, values, traits, or errors are exposed.\n\nKeywords: moonrc, ",
+                "matched": false
+              },
+              {
+                "text": "moonrcinspect",
+                "matched": true
+              },
+              {
+                "text": ", cmd/moonrc, alicedhaha, empty API, no public API",
+                "matched": false
+              }
+            ]
+          },
+          {
+            "package": "src/analyzer",
+            "name": "alicedhaha/moonrcinspect/src/analyzer",
+            "summary": "This package analyzes RC networks: it produces design-level metrics, per-net metrics with anomaly detection, and computes Elmore delay when the net forms a connected single-driver tree, returning an explicit status otherwise.\n\nKeywords: RC network, analyzer, DesignMetrics, NetMetrics, Elmore delay, ElmoreResult, ElmoreStatus, NodeDelay, net analysis, anomaly detection, complexity score, RC网络, 延时分析, 电路分析",
+            "summary_version": "0.2.1",
+            "is_summary_current": true,
+            "summary_fragments": [
+              {
+                "text": "This package analyzes RC networks: it produces design-level metrics, per-net metrics with anomaly detection, and computes Elmore delay when the net forms a connected single-driver tree, returning an explicit status otherwise.\n\nKeywords: RC network, analyzer, DesignMetrics, NetMetrics, Elmore delay, ElmoreResult, ElmoreStatus, NodeDelay, net analysis, anomaly detection, complexity score, RC网络, 延时分析, 电路分析",
+                "matched": false
+              }
+            ]
+          },
+          {
+            "package": "src/audit",
+            "name": "alicedhaha/moonrcinspect/src/audit",
+            "summary": "This package provides auditing utilities for RC networks, returning an AuditReport with diagnostics and pass/fail status, configurable by AuditConfig (strict mode, tolerance, complexity threshold). It supports running a default set of rules or a custom selection via audit_with_rules.\n\nKeywords: audit, RCNetwork, AuditRule, AuditConfig, AuditReport, diagnostics, strict mode, capacitance tolerance, complexity threshold, audit_with_rules, default_rules, 审计, 规则",
+            "summary_version": "0.2.1",
+            "is_summary_current": true,
+            "summary_fragments": [
+              {
+                "text": "This package provides auditing utilities for RC networks, returning an AuditReport with diagnostics and pass/fail status, configurable by AuditConfig (strict mode, tolerance, complexity threshold). It supports running a default set of rules or a custom selection via audit_with_rules.\n\nKeywords: audit, RCNetwork, AuditRule, AuditConfig, AuditReport, diagnostics, strict mode, capacitance tolerance, complexity threshold, audit_with_rules, default_rules, 审计, 规则",
+                "matched": false
+              }
+            ]
+          },
+          {
+            "package": "src/cli",
+            "name": "alicedhaha/moonrcinspect/src/cli",
+            "summary": "This package provides the CLI layer for MoonRcInspect. It defines CliConfig, CliOutcome, commands (Parse, Analyze, Audit, Visualize, Report, Path, Coupling, Reduce, Matrix), output formats (Text, JSON, DOT, Markdown, CSV, SARIF), path modes, and functions parse_config, execute, and usage.\n\nKeywords: MoonRcInspect, CLI, CliConfig, CliOutcome, parse_config, execute, usage, Command, Analyze, Audit, Visualize, Report, OutputFormat, SARIF, PathMode, 命令行配置",
+            "summary_version": "0.2.1",
+            "is_summary_current": true,
+            "summary_fragments": [
+              {
+                "text": "This package provides the CLI layer for ",
+                "matched": false
+              },
+              {
+                "text": "MoonRcInspect",
+                "matched": true
+              },
+              {
+                "text": ". It defines CliConfig, CliOutcome, commands (Parse, Analyze, Audit, Visualize, Report, Path, Coupling, Reduce, Matrix), output formats (Text, JSON, DOT, Markdown, CSV, SARIF), path modes, and functions parse_config, execute, and usage.\n\nKeywords: ",
+                "matched": false
+              },
+              {
+                "text": "MoonRcInspect",
+                "matched": true
+              },
+              {
+                "text": ", CLI, CliConfig, CliOutcome, parse_config, execute, usage, Command, Analyze, Audit, Visualize, Report, OutputFormat, SARIF, PathMode, 命令行配置",
+                "matched": false
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "term": "PAT PMT",
+    "url": "https://mooncakes.io/api/v0/search?kw=PAT%20PMT&limit=100",
+    "status": 200,
+    "body": []
+  }
+]
