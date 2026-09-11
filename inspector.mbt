@@ -3,6 +3,8 @@ pub(all) enum InspectEvent {
   Issue(Diagnostic)
   ProgramsChanged(Array[ProgramRef])
   ProgramMapChanged(Pmt)
+  MediaClock(pid~ : Int, offset~ : Int64, ClockSample)
+  PesTimestamp(pid~ : Int, PesHeader)
 } derive(Eq, Debug)
 
 ///|
@@ -20,6 +22,9 @@ pub struct Inspector {
   priv pat_table : TableCollector
   priv assemblers : FixedArray[SectionAssembler?]
   priv slots : Array[ProgramSlot]
+  priv pes : FixedArray[PesAssembler?]
+  priv clocks : FixedArray[PcrClock?]
+  priv known_pcr : FixedArray[Bool]
   priv max_programs : Int
   priv mut packets : Int64
   priv mut closed : Bool
@@ -39,6 +44,9 @@ pub fn Inspector::new(
     pat_table: TableCollector::new(0),
     assemblers: FixedArray::make(8192, None),
     slots: [],
+    pes: FixedArray::make(8192, None),
+    clocks: FixedArray::make(8192, None),
+    known_pcr: FixedArray::make(8192, false),
     max_programs,
     packets: 0L,
     closed: false,
@@ -147,6 +155,7 @@ fn Inspector::on_section(
       }
       self.slots.push(slot)
     }
+    self.rebuild_media(emit)
     emit(ProgramsChanged(self.programs()))
   } else {
     if section.table_id != 2 {
@@ -180,6 +189,7 @@ fn Inspector::on_section(
           None => ()
         }
         slot.section = Some(section)
+        self.rebuild_media(emit)
         emit(ProgramMapChanged(pmt))
         return
       }
@@ -210,6 +220,7 @@ fn Inspector::on_packet(
     }
     Ok(e) => e
   }
+  self.observe_media(p, event, emit)
   match event {
     Duplicate | IgnoredNull => return
     Gap(..) => {
@@ -291,6 +302,14 @@ pub fn Inspector::finish(
   for slot in self.slots {
     if slot.section is None {
       emit(Issue(fault("pmt_missing", 0L, Some(slot.reference.pmt_pid))))
+    }
+  }
+  for pes in self.pes {
+    if pes is Some(a) {
+      match a.finish() {
+        Err(e) => emit(Issue(e))
+        Ok(_) => ()
+      }
     }
   }
   for assembler in self.assemblers {
