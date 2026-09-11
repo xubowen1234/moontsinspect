@@ -24,16 +24,19 @@ extern "js" fn io_failed() -> Bool =
 
 ///|
 extern "js" fn usage_error() -> Unit =
-  #| () => console.error('Usage: moontsinspect [--summary] FILE.ts (NDJSON output; 188-byte TS only)')
+  #| () => console.error('Usage: moontsinspect [--summary] [--recover] FILE.ts (NDJSON output; 188-byte TS only)')
 
 ///|
 fn main {
   let args = @env.args()
   let mut summary_only = false
+  let mut recover = false
   let mut path = None
   for i = 2; i < args.length(); i = i + 1 {
     if args[i] == "--summary" && !summary_only {
       summary_only = true
+    } else if args[i] == "--recover" && !recover {
+      recover = true
     } else if args[i] == "--help" {
       usage_error()
       return
@@ -57,7 +60,9 @@ fn main {
   if fd < 0 {
     return
   }
-  let inspector = @ts.Inspector::new().unwrap()
+  let inspector = @ts.Inspector::new(
+    recover_scan_limit=if recover { 65536 } else { 0 },
+  ).unwrap()
   let mut issues = 0L
   let emit = fn(event : @ts.InspectEvent) {
     let issue = event is @ts.Issue(_)

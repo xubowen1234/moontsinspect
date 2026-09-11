@@ -17,6 +17,7 @@ priv struct ProgramSlot {
 /// Bounded offline inspection session. Issues are streamed, never accumulated internally.
 pub struct Inspector {
   priv reader : PacketReader
+  priv recovery : RecoveryReader?
   priv continuity : Continuity
   priv pat_assembler : SectionAssembler
   priv pat_table : TableCollector
@@ -33,12 +34,22 @@ pub struct Inspector {
 ///|
 pub fn Inspector::new(
   max_programs? : Int = 64,
+  recover_scan_limit? : Int = 0,
 ) -> Result[Inspector, Diagnostic] {
   if max_programs < 1 || max_programs > 256 {
     return Err(fault("program_limit_range", 0L, None))
   }
+  let recovery = if recover_scan_limit == 0 {
+    None
+  } else {
+    match RecoveryReader::new(recover_scan_limit) {
+      Ok(r) => Some(r)
+      Err(e) => return Err(e)
+    }
+  }
   Ok({
     reader: PacketReader::new(),
+    recovery,
     continuity: Continuity::new(),
     pat_assembler: SectionAssembler::new(0).unwrap(),
     pat_table: TableCollector::new(0),
@@ -269,12 +280,34 @@ pub fn Inspector::feed(
     emit(Issue(fault("inspector_closed", 0L, None)))
     return
   }
-  self.reader.feed(bytes, fn(r) {
+  let on_input = fn(r : Result[Packet, Diagnostic]) {
     match r {
       Ok(p) => self.on_packet(p, emit)
-      Err(e) => emit(Issue(e))
+      Err(e) => {
+        if e.code == "sync_lost" {
+          self.pat_assembler.reset()
+          self.pat_table.discard_pending()
+          for pid = 0; pid < 8192; pid = pid + 1 {
+            self.continuity.states[pid] = None
+            if self.assemblers[pid] is Some(a) {
+              a.reset()
+            }
+            if self.pes[pid] is Some(a) {
+              a.reset()
+            }
+            if self.clocks[pid] is Some(c) {
+              c.reset()
+            }
+          }
+        }
+        emit(Issue(e))
+      }
     }
-  })
+  }
+  match self.recovery {
+    Some(r) => r.feed(bytes, on_input)
+    None => self.reader.feed(bytes, on_input)
+  }
 }
 
 ///|
@@ -288,7 +321,11 @@ pub fn Inspector::finish(
     return
   }
   self.closed = true
-  match self.reader.finish() {
+  let ending = match self.recovery {
+    Some(r) => r.finish()
+    None => self.reader.finish()
+  }
+  match ending {
     Err(e) => emit(Issue(e))
     Ok(_) => ()
   }
