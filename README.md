@@ -2,7 +2,7 @@
 
 原创 MoonBit **离线 MPEG-2 Transport Stream 结构与媒体时钟检查库**。面向录制/转封装流水线、媒体工具与 SDK 作者。输入保存的 TS 字节，输出节目清单、逐 PID 连续性问题、PCR 相对时钟与 PES 时间戳。
 
-**开发状态：公开源码已发布，正在完成远程 CI 验证；尚未上传 MoonCakes。** 本地测试或 CI 通过不代表比赛审核通过。
+**开发状态：公开源码已发布；四后端验证由 GitHub Actions 执行，发布状态以 Release 和 CI 记录为准；尚未上传 MoonCakes。** 本地测试或 CI 通过不代表比赛审核通过。
 
 源码仓库： https://github.com/xubowen1234/moontsinspect
 
@@ -16,7 +16,15 @@
 
 已测试工具链：Moon CLI 0.1.20260904 / moonc v0.10.12+1634b282e（精确版本见 toolchain.json；旧版格式器输出不同）；CLI 使用 Node.js，交叉测试额外需要 ffprobe。不要将下面的模块名误当成已经可从 MoonCakes 安装。
 
-在本仓库根目录执行：
+从公开仓库克隆后，在仓库根目录执行。先使用 `node scripts/check-toolchain.cjs` 检查 `toolchain.json` 中的工具版本；如使用隔离 SDK，仅在当前终端设置 `MOON_HOME` 和 PATH，不需要修改全局 SDK。
+
+```sh
+git clone https://github.com/xubowen1234/moontsinspect.git
+cd moontsinspect
+node scripts/check-toolchain.cjs
+```
+
+然后执行：
 
 ```sh
 moon test --target wasm-gc
