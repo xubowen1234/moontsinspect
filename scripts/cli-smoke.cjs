@@ -1,0 +1,28 @@
+'use strict';
+// Builds once, then validates the actual linked MoonBit CLI (not a mock).
+const fs = require('node:fs');
+const path = require('node:path');
+const cp = require('node:child_process');
+const assert = require('node:assert/strict');
+const root = path.resolve(__dirname, '..');
+const build = cp.spawnSync('moon', ['build', '--target', 'js', 'cmd/inspect'], {cwd: root, encoding:'utf8'});
+assert.equal(build.status, 0, build.stderr);
+const cli = path.join(root, '_build/js/debug/build/cmd/inspect/inspect.js');
+assert.ok(fs.existsSync(cli), cli);
+const run = (...args) => cp.spawnSync(process.execPath, [cli, ...args], {cwd:root, encoding:'utf8', maxBuffer: 4*1024*1024});
+let r=run('--summary','fixtures/synthetic.ts');
+assert.equal(r.status,0,r.stdout+r.stderr);
+const lines=r.stdout.trim().split(/\r?\n/).map(JSON.parse);
+assert.equal(lines.length,1);
+assert.equal(lines[0].maps[0].program,7);
+assert.equal(lines[0].maps[0].pcr_pid,256);
+assert.equal(lines[0].packets,'184');
+r=run('fixtures/synthetic.ts');
+assert.equal(r.status,0,r.stdout+r.stderr);
+const events=r.stdout.trim().split(/\r?\n/).map(JSON.parse);
+assert.ok(events.some(x=>x.type==='pes'));
+assert.ok(events.some(x=>x.type==='pcr'));
+assert.equal(run().status,2);
+assert.equal(run('--bad-option').status,2);
+assert.equal(run('fixtures/does-not-exist.ts').status,2);
+console.log('CLI smoke: inventory, PES/PCR events, usage and IO failures passed');
