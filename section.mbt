@@ -26,6 +26,7 @@ pub struct LongSection {
   body : Bytes
   bytes : Bytes
   offset : Int64
+  priv locations : Array[Int64]
 } derive(Eq, Debug)
 
 ///|
@@ -64,5 +65,15 @@ pub fn parse_section(
     body: bytes.view(start=8, end=bytes.length() - 4).to_owned(),
     bytes,
     offset,
+    locations: [],
   })
+}
+
+///|
+fn LongSection::at(self : LongSection, relative : Int) -> Int64 {
+  if self.locations.is_empty() {
+    self.offset + relative.to_int64()
+  } else {
+    self.locations[relative]
+  }
 }

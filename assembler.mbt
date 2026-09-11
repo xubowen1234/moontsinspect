@@ -3,6 +3,7 @@
 pub struct SectionAssembler {
   priv pid : Int
   priv buffer : Array[Byte]
+  priv positions : Array[Int64]
   priv mut start_offset : Int64
 }
 
@@ -11,12 +12,13 @@ pub fn SectionAssembler::new(pid : Int) -> Result[SectionAssembler, Diagnostic] 
   if pid < 0 || pid >= 8191 {
     return Err(fault("pid_range", 0L, Some(pid)))
   }
-  Ok({ pid, buffer: [], start_offset: 0L })
+  Ok({ pid, buffer: [], positions: [], start_offset: 0L })
 }
 
 ///|
 pub fn SectionAssembler::reset(self : SectionAssembler) -> Unit {
   self.buffer.clear()
+  self.positions.clear()
 }
 
 ///|
@@ -50,6 +52,7 @@ fn SectionAssembler::consume(
       self.start_offset = offset + i.to_int64()
     }
     self.buffer.push(byte)
+    self.positions.push(offset + i.to_int64())
     if self.buffer.length() >= 3 {
       let total = 3 +
         (((self.buffer[1].to_int() & 15) << 8) | self.buffer[2].to_int())
@@ -60,8 +63,27 @@ fn SectionAssembler::consume(
       }
       if self.buffer.length() == total {
         let section = Bytes::from_array(self.buffer[:])
+        let positions = self.positions.copy()
+        let start = self.start_offset
         self.reset()
-        emit(parse_section(section, offset=self.start_offset, pid=self.pid))
+        let parsed = match parse_section(section, offset=start, pid=self.pid) {
+          Ok(s) => Ok({ ..s, locations: positions })
+          Err(e) => {
+            let delta = (e.offset - start).to_int()
+            Err(
+              fault(
+                e.code,
+                if delta >= 0 && delta < positions.length() {
+                  positions[delta]
+                } else {
+                  start
+                },
+                e.pid,
+              ),
+            )
+          }
+        }
+        emit(parsed)
         allow_new = new_sections
       }
     }

@@ -74,17 +74,17 @@ pub fn parse_pat(section : LongSection) -> Result[Pat, Diagnostic] {
 ///|
 fn descriptors(
   bytes : Bytes,
-  offset : Int64,
+  locate : (Int) -> Int64,
 ) -> Result[Array[Descriptor], Diagnostic] {
   let result = []
   let mut pos = 0
   while pos < bytes.length() {
     if pos + 2 > bytes.length() {
-      return Err(fault("descriptor_length", offset + pos.to_int64(), None))
+      return Err(fault("descriptor_length", locate(pos), None))
     }
     let end = pos + 2 + bytes[pos + 1].to_int()
     if end > bytes.length() {
-      return Err(fault("descriptor_length", offset + pos.to_int64(), None))
+      return Err(fault("descriptor_length", locate(pos), None))
     }
     result.push({
       tag: bytes[pos].to_int(),
@@ -119,7 +119,9 @@ pub fn parse_pmt(section : LongSection) -> Result[Pmt, Diagnostic] {
     return Err(bad)
   }
   let program_descriptors = match
-    descriptors(b.view(start=4, end=info_end).to_owned(), section.offset + 12L) {
+    descriptors(b.view(start=4, end=info_end).to_owned(), fn(index) {
+      section.at(12 + index)
+    }) {
     Ok(x) => x
     Err(e) => return Err(e)
   }
@@ -148,10 +150,9 @@ pub fn parse_pmt(section : LongSection) -> Result[Pmt, Diagnostic] {
       }
     }
     let desc = match
-      descriptors(
-        b.view(start=pos + 5, end~).to_owned(),
-        section.offset + 13L + pos.to_int64(),
-      ) {
+      descriptors(b.view(start=pos + 5, end~).to_owned(), fn(index) {
+        section.at(13 + pos + index)
+      }) {
       Ok(x) => x
       Err(e) => return Err(e)
     }

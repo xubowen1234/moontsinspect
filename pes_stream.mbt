@@ -2,18 +2,20 @@
 /// Single elementary PID header reassembler. Never buffers elementary media payload.
 pub struct PesAssembler {
   priv buffer : Array[Byte]
+  priv positions : Array[Int64]
   priv mut collecting : Bool
   priv mut offset : Int64
 }
 
 ///|
 pub fn PesAssembler::new() -> PesAssembler {
-  { buffer: [], collecting: false, offset: 0L }
+  { buffer: [], positions: [], collecting: false, offset: 0L }
 }
 
 ///|
 pub fn PesAssembler::reset(self : PesAssembler) -> Unit {
   self.buffer.clear()
+  self.positions.clear()
   self.collecting = false
 }
 
@@ -47,8 +49,10 @@ pub fn PesAssembler::feed(
   if !self.collecting {
     return
   }
-  for byte in payload {
+  for i = 0; i < payload.length(); i = i + 1 {
+    let byte = payload[i]
     self.buffer.push(byte)
+    self.positions.push(offset + i.to_int64())
     let n = self.buffer.length()
     if n < 6 {
       continue
@@ -61,8 +65,25 @@ pub fn PesAssembler::feed(
       match result {
         Err({ code: "pes_header_incomplete", .. }) => ()
         _ => {
+          let positioned = match result {
+            Ok(h) => Ok(h)
+            Err(e) => {
+              let delta = (e.offset - self.offset).to_int()
+              Err(
+                fault(
+                  e.code,
+                  if delta >= 0 && delta < self.positions.length() {
+                    self.positions[delta]
+                  } else {
+                    self.offset
+                  },
+                  e.pid,
+                ),
+              )
+            }
+          }
           self.reset()
-          emit(result)
+          emit(positioned)
           return
         }
       }
