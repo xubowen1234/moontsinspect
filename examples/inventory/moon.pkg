@@ -1,0 +1,6 @@
+import {
+  "xubowen1234/moontsinspect" @ts,
+  "moonbitlang/core/json",
+}
+
+pkgtype(kind: "executable")

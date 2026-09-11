@@ -1,0 +1,202 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "xubowen1234/moontsinspect"
+
+import {
+  "moonbitlang/core/debug",
+}
+
+// Values
+pub fn event_json(InspectEvent) -> Json
+
+pub fn mpeg_crc32(Bytes) -> UInt
+
+pub fn parse_packet(Bytes, offset? : Int64) -> Result[Packet, Diagnostic]
+
+pub fn parse_pat(LongSection) -> Result[Pat, Diagnostic]
+
+pub fn parse_pes_header(Bytes, offset? : Int64) -> Result[PesHeader, Diagnostic]
+
+pub fn parse_pmt(LongSection) -> Result[Pmt, Diagnostic]
+
+pub fn parse_section(Bytes, offset? : Int64, pid? : Int) -> Result[LongSection, Diagnostic]
+
+// Errors
+
+// Types and methods
+pub struct Adaptation {
+  discontinuity : Bool
+  random_access : Bool
+  pcr : Int64?
+  opcr : Int64?
+  splice_countdown : Int?
+  private_data : Bytes
+  extension : Bytes
+} derive(Eq, @debug.Debug)
+
+pub struct ClockSample {
+  segment : Int
+  relative_ticks : Int64
+  delta_ticks : Int64
+  wrapped : Bool
+} derive(Eq, @debug.Debug)
+
+pub struct Continuity {
+  // private fields
+}
+pub fn Continuity::new() -> Self
+pub fn Continuity::observe(Self, Packet) -> Result[ContinuityEvent, Diagnostic]
+pub fn Continuity::reset_pid(Self, Int) -> Result[Unit, Diagnostic]
+
+pub(all) enum ContinuityEvent {
+  First
+  Continuous
+  Duplicate
+  Discontinuity
+  IgnoredNull
+  TransportError
+  Gap(expected~ : Int, actual~ : Int)
+} derive(Eq, @debug.Debug)
+
+pub struct Descriptor {
+  tag : Int
+  data : Bytes
+} derive(Eq, @debug.Debug)
+
+pub(all) struct Diagnostic {
+  code : String
+  offset : Int64
+  pid : Int?
+} derive(Eq, @debug.Debug)
+
+pub struct ElementaryStream {
+  stream_type : Int
+  pid : Int
+  descriptors : Array[Descriptor]
+} derive(Eq, @debug.Debug)
+
+pub(all) enum InspectEvent {
+  Issue(Diagnostic)
+  ProgramsChanged(Array[ProgramRef])
+  ProgramMapChanged(Pmt)
+  MediaClock(pid~ : Int, offset~ : Int64, ClockSample)
+  PesTimestamp(pid~ : Int, PesHeader)
+} derive(Eq, @debug.Debug)
+
+pub struct Inspector {
+  // private fields
+}
+pub fn Inspector::feed(Self, Bytes, (InspectEvent) -> Unit) -> Unit
+pub fn Inspector::finish(Self, (InspectEvent) -> Unit) -> Unit
+pub fn Inspector::new(max_programs? : Int, recover_scan_limit? : Int) -> Result[Self, Diagnostic]
+pub fn Inspector::packet_count(Self) -> Int64
+pub fn Inspector::program_maps(Self) -> Array[Pmt]
+pub fn Inspector::programs(Self) -> Array[ProgramRef]
+pub fn Inspector::summary_json(Self) -> Json
+
+pub struct LongSection {
+  table_id : Int
+  extension : Int
+  version : Int
+  current : Bool
+  number : Int
+  last_number : Int
+  body : Bytes
+  bytes : Bytes
+  offset : Int64
+  // private fields
+} derive(Eq, @debug.Debug)
+
+pub struct Packet {
+  offset : Int64
+  pid : Int
+  continuity : Int
+  payload_start : Bool
+  transport_error : Bool
+  scrambling : Int
+  adaptation_control : Int
+  payload : Bytes
+  raw : Bytes
+} derive(Eq, @debug.Debug)
+pub fn Packet::adaptation(Self) -> Result[Adaptation?, Diagnostic]
+
+pub struct PacketReader {
+  // private fields
+}
+pub fn PacketReader::buffered(Self) -> Int
+pub fn PacketReader::feed(Self, Bytes, (Result[Packet, Diagnostic]) -> Unit) -> Unit
+pub fn PacketReader::finish(Self) -> Result[Unit, Diagnostic]
+pub fn PacketReader::new() -> Self
+
+pub struct Pat {
+  section : LongSection
+  programs : Array[ProgramRef]
+  network_pid : Int?
+} derive(Eq, @debug.Debug)
+
+pub struct PcrClock {
+  // private fields
+}
+pub fn PcrClock::new() -> Self
+pub fn PcrClock::observe(Self, Int64, discontinuity? : Bool) -> Result[ClockSample, Diagnostic]
+pub fn PcrClock::reset(Self) -> Unit
+
+pub struct PesAssembler {
+  // private fields
+}
+pub fn PesAssembler::buffered(Self) -> Int
+pub fn PesAssembler::feed(Self, Bytes, Bool, Int64, (Result[PesHeader, Diagnostic]) -> Unit) -> Unit
+pub fn PesAssembler::finish(Self) -> Result[Unit, Diagnostic]
+pub fn PesAssembler::new() -> Self
+pub fn PesAssembler::reset(Self) -> Unit
+
+pub struct PesHeader {
+  stream_id : Int
+  packet_length : Int
+  pts : Int64?
+  dts : Int64?
+  header_bytes : Int
+  opaque_optional : Bytes
+  offset : Int64
+} derive(Eq, @debug.Debug)
+
+pub struct Pmt {
+  section : LongSection
+  pcr_pid : Int
+  descriptors : Array[Descriptor]
+  streams : Array[ElementaryStream]
+} derive(Eq, @debug.Debug)
+
+pub struct ProgramRef {
+  number : Int
+  pmt_pid : Int
+} derive(Eq, @debug.Debug)
+
+pub struct RecoveryReader {
+  // private fields
+}
+pub fn RecoveryReader::buffered(Self) -> Int
+pub fn RecoveryReader::feed(Self, Bytes, (Result[Packet, Diagnostic]) -> Unit) -> Unit
+pub fn RecoveryReader::finish(Self) -> Result[Unit, Diagnostic]
+pub fn RecoveryReader::new(Int) -> Result[Self, Diagnostic]
+
+pub struct SectionAssembler {
+  // private fields
+}
+pub fn SectionAssembler::buffered(Self) -> Int
+pub fn SectionAssembler::feed(Self, Bytes, Bool, Int64, (Result[LongSection, Diagnostic]) -> Unit) -> Unit
+pub fn SectionAssembler::finish(Self) -> Result[Unit, Diagnostic]
+pub fn SectionAssembler::new(Int) -> Result[Self, Diagnostic]
+pub fn SectionAssembler::reset(Self) -> Unit
+
+pub struct TableCollector {
+  // private fields
+}
+pub fn TableCollector::accept(Self, LongSection) -> Result[Array[LongSection]?, Diagnostic]
+pub fn TableCollector::active(Self) -> Array[LongSection]
+pub fn TableCollector::discard_pending(Self) -> Unit
+pub fn TableCollector::new(Int) -> Self
+
+// Type aliases
+
+// Traits
+
