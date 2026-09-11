@@ -7,4 +7,4 @@ Retrieved 2026-09-11; the standard PDF/text is kept outside this repository, not
 
 Scope: 188-byte packets; opaque unknown descriptors; no codecs, scrambling decryption, network arrival timing, or TR 101 290 certification. RFC 8216 section 3.2 motivates TS inspection for HLS but is not a replacement for H.222.0.
 
-Implemented initially: packet header, structural length checks and positioned errors. Optional adaptation fields and higher-level semantics are added with separate tests.
+Implemented subset: packet/adaptation structural checks and PCR/OPCR decoding; bounded long PSI reassembly with MPEG-2 CRC; PAT and single-section PMT; current table-version activation; per-PID continuity; bounded PES header and PTS/DTS extraction; relative PCR segmentation; explicit sync recovery. Fragmented PSI/PES error locations map back to the original TS byte offsets. See architecture.md and README for unsupported semantics; passing these checks is not full standard certification.

@@ -37,6 +37,10 @@ let inventory = inspector.program_maps()
 
 在调用方 moon.pkg 中 import `xubowen1234/moontsinspect` 并命名为 @ts；完整、可运行的调用方见 [examples/inventory](examples/inventory/main.mbt)。底层也开放 parse_packet、parse_section、parse_pat、parse_pmt、parse_pes_header 及独立状态机。生成的 [公共接口](pkg.generated.mbti) 列出实际导出，不用 README 描述代替 API。
 
+## 验收
+
+PowerShell 一键执行：`./scripts/verify-local.ps1`。48 个测试在 wasm-gc、wasm、JS 三后端各自通过；native 仅静态检查通过，运行验证留给 CI。实际执行状态及发布前缺口见 [验收说明](docs/validation.md)。
+
 ## CLI
 
 ```sh

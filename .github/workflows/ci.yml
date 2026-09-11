@@ -1,0 +1,58 @@
+name: validate
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: validation-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  backends:
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        target: [wasm-gc, wasm, js, native]
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: '24'
+      - name: Install reviewed official MoonBit installer
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --fail --location --retry 3 https://cli.moonbitlang.com/install/unix.sh -o "$RUNNER_TEMP/moon-install.sh"
+          echo '46495f8cdc0050f79b6cb195d66478d101cb3601d68506568fbe377fcdf2a9fe  '"$RUNNER_TEMP/moon-install.sh" | sha256sum --check
+          MOON_HOME="$HOME/.moon" bash "$RUNNER_TEMP/moon-install.sh" latest
+          echo "$HOME/.moon/bin" >> "$GITHUB_PATH"
+      - name: Record versions and verify required native compiler
+        run: |
+          moon version --all
+          node --version
+          cc --version
+      - name: Format, check, build, test and real example
+        run: |
+          moon fmt --check
+          moon check --target ${{ matrix.target }} --deny-warn
+          moon build --target ${{ matrix.target }}
+          moon test --target ${{ matrix.target }}
+          moon run examples/inventory --target ${{ matrix.target }}
+      - name: Verify generated public API
+        if: matrix.target == 'wasm-gc'
+        run: |
+          moon info
+          git diff --exit-code -- '*.mbti'
+      - name: Install independent media oracle
+        if: matrix.target == 'js'
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes ffmpeg
+          ffprobe -version
+      - name: Run real CLI and independent cross-check
+        if: matrix.target == 'js'
+        run: |
+          node scripts/cli-smoke.cjs
+          node scripts/crosscheck.cjs
