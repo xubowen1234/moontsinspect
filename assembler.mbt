@@ -12,7 +12,7 @@ pub fn SectionAssembler::new(pid : Int) -> Result[SectionAssembler, Diagnostic] 
   if pid < 0 || pid >= 8191 {
     return Err(fault("pid_range", 0L, Some(pid)))
   }
-  Ok({ pid, buffer: [], positions: [], start_offset: 0L })
+  Ok({ pid, buffer: [], positions: [], start_offset: 0L, })
 }
 
 ///|
@@ -67,7 +67,7 @@ fn SectionAssembler::consume(
         let start = self.start_offset
         self.reset()
         let parsed = match parse_section(section, offset=start, pid=self.pid) {
-          Ok(s) => Ok({ ..s, locations: positions })
+          Ok(s) => Ok({ ..s, locations: positions, })
           Err(e) => {
             let delta = (e.offset - start).to_int()
             Err(

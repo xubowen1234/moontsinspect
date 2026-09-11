@@ -39,7 +39,8 @@ test "PES loss resets partial headers and reports gap at packet offset" {
   })
   i.feed(packet_bytes(256, 2, payload=b"\x01\xe0"), fn(e) { events.push(e) })
   assert_true(
-    events[2] is Issue({ code: "continuity_gap", pid: Some(256), offset: 564L }),
+    events[2]
+    is Issue({ code: "continuity_gap", pid: Some(256), offset: 564L, }),
   )
   i.finish(fn(e) { events.push(e) })
   assert_eq(events.length(), 3)

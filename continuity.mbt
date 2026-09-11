@@ -23,7 +23,7 @@ pub struct Continuity {
 
 ///|
 pub fn Continuity::new() -> Continuity {
-  { states: FixedArray::make(8192, None) }
+  { states: FixedArray::make(8192, None), }
 }
 
 ///|
@@ -70,7 +70,7 @@ pub fn Continuity::observe(
     None => false
   }
   let prev = self.states[pid]
-  self.states[pid] = Some({ previous: packet, duplicated: false })
+  self.states[pid] = Some({ previous: packet, duplicated: false, })
   if discontinuity {
     return Ok(Discontinuity)
   }
@@ -87,7 +87,7 @@ pub fn Continuity::observe(
       if payload &&
         packet.continuity == old.continuity &&
         same_duplicate(old, packet, has_pcr) {
-        self.states[pid] = Some({ previous: packet, duplicated: true })
+        self.states[pid] = Some({ previous: packet, duplicated: true, })
         if state.duplicated {
           Ok(Gap(expected~, actual=packet.continuity))
         } else {

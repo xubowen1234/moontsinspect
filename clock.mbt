@@ -16,7 +16,7 @@ pub struct PcrClock {
 
 ///|
 pub fn PcrClock::new() -> PcrClock {
-  { previous: None, relative: 0L, segment: 0 }
+  { previous: None, relative: 0L, segment: 0, }
 }
 
 ///|

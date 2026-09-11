@@ -152,7 +152,7 @@ fn Inspector::on_section(
           preserved = old.section
         }
       }
-      next.push({ reference: p, section: preserved })
+      next.push({ reference: p, section: preserved, })
     }
     // Rebuild bounded per-PMT-PID assemblers on a complete PAT activation.
     for old in self.slots {

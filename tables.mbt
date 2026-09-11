@@ -65,10 +65,10 @@ pub fn parse_pat(section : LongSection) -> Result[Pat, Diagnostic] {
           return Err(fault("pat_duplicate_program", section.offset, Some(0)))
         }
       }
-      programs.push({ number, pmt_pid: pid })
+      programs.push({ number, pmt_pid: pid, })
     }
   }
-  Ok({ section, programs, network_pid })
+  Ok({ section, programs, network_pid, })
 }
 
 ///|
@@ -156,8 +156,8 @@ pub fn parse_pmt(section : LongSection) -> Result[Pmt, Diagnostic] {
       Ok(x) => x
       Err(e) => return Err(e)
     }
-    streams.push({ stream_type: b[pos].to_int(), pid, descriptors: desc })
+    streams.push({ stream_type: b[pos].to_int(), pid, descriptors: desc, })
     pos = end
   }
-  Ok({ section, pcr_pid, descriptors: program_descriptors, streams })
+  Ok({ section, pcr_pid, descriptors: program_descriptors, streams, })
 }

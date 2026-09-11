@@ -11,6 +11,7 @@ Push-Location -LiteralPath $root
 try {
   Invoke-Checked 'moon' @('version', '--all')
   Invoke-Checked 'node' @('--version')
+  Invoke-Checked 'node' @('scripts/check-toolchain.cjs')
   Invoke-Checked 'ffprobe' @('-version')
   Invoke-Checked 'moon' @('fmt', '--check')
   foreach ($target in @('wasm-gc', 'wasm', 'js')) {

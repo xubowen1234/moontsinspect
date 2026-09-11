@@ -199,4 +199,3 @@ pub fn TableCollector::new(Int) -> Self
 // Type aliases
 
 // Traits
-

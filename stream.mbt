@@ -9,7 +9,7 @@ pub struct PacketReader {
 
 ///|
 pub fn PacketReader::new() -> PacketReader {
-  { pending: [], offset: 0L, closed: false }
+  { pending: [], offset: 0L, closed: false, }
 }
 
 ///|

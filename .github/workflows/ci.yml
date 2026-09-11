@@ -31,6 +31,7 @@ jobs:
       - name: Record versions and verify required native compiler
         run: |
           moon version --all
+          node scripts/check-toolchain.cjs
           node --version
           cc --version
       - name: Format, check, build, test and real example

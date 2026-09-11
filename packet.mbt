@@ -22,7 +22,7 @@ pub struct Packet {
 
 ///|
 fn fault(code : String, offset : Int64, pid : Int?) -> Diagnostic {
-  { code, offset, pid }
+  { code, offset, pid, }
 }
 
 ///|

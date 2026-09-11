@@ -30,7 +30,7 @@ fn pmt_section() -> Bytes {
 ///|
 test "independent PAT and PMT agree with ffprobe inventory" {
   let pat = parse_pat(parse_section(pat_section()).unwrap()).unwrap()
-  assert_eq(pat.programs, [{ number: 7, pmt_pid: 4096 }])
+  assert_eq(pat.programs, [{ number: 7, pmt_pid: 4096, }])
   assert_eq(pat.network_pid, None)
   let pmt = parse_pmt(parse_section(pmt_section()).unwrap()).unwrap()
   assert_eq(pmt.section.extension, 7)
@@ -64,9 +64,9 @@ test "PMT preserves unknown types and descriptor bytes with bounded loops" {
   let body = b"\xff\xff\xf0\x03\xfa\x01z\xfe\xe1\x00\xf0\x03\xfb\x01q"
   let p = parse_pmt(long_section(2, 1, 0, 0, 0, body)).unwrap()
   assert_eq(p.pcr_pid, 8191)
-  assert_eq(p.descriptors, [{ tag: 250, data: b"z" }])
+  assert_eq(p.descriptors, [{ tag: 250, data: b"z", }])
   assert_eq(p.streams[0].stream_type, 254)
-  assert_eq(p.streams[0].descriptors, [{ tag: 251, data: b"q" }])
+  assert_eq(p.streams[0].descriptors, [{ tag: 251, data: b"q", }])
   assert_true(
     parse_pmt(long_section(2, 1, 0, 0, 0, b"\xe1\x00\xf0\x02\xfa\x05"))
     is Err(_),

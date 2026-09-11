@@ -9,7 +9,7 @@ pub struct PesAssembler {
 
 ///|
 pub fn PesAssembler::new() -> PesAssembler {
-  { buffer: [], positions: [], collecting: false, offset: 0L }
+  { buffer: [], positions: [], collecting: false, offset: 0L, }
 }
 
 ///|

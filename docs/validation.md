@@ -2,7 +2,7 @@
 
 ## Local results
 
-Run \scripts\verify-local.ps1 from PowerShell (the script resolves its own repository root), or execute the equivalent commands in .github/workflows/ci.yml.
+Run ./scripts/verify-local.ps1 from PowerShell (the script resolves its own repository root), or execute the equivalent commands in .github/workflows/ci.yml.
 
 - moon fmt --check: PASS.
 - wasm-gc, wasm, js: each passed check --deny-warn, build, all **48** tests, and the real inventory example. These are the same 48 cases across three backends, not 144 unique tests.
@@ -20,13 +20,13 @@ The workflow covers four backends on Ubuntu 24.04 and records the actual tool ve
 
 The installer currently selects the **latest** official MoonBit bundle. Attempts to verify immutable historical binary URLs for the local version returned HTTP 403, so this workflow does not pretend to be a fully pinned compiler reproduction. Local versions are recorded in README. A newer compiler may expose compatibility changes; a green CI run must be obtained before release. Node uses the 24 major line; Ubuntu ffprobe is version-reported rather than byte-identical to the Windows fixture generator.
 
-CI configuration is present; **no remote CI run has happened yet**. Do not show a green badge or treat configuration review as executed CI.
+The first remote run (34593958334) failed at formatting: the earlier local 0.10.4 formatter differs from the CI 0.10.12 formatter. An isolated local 0.10.12 toolchain was installed without changing the global SDK; source formatting was regenerated and toolchain.json plus an executable version gate now prevent accidental formatter/compiler drift. The installer still uses the official latest download endpoint; if it changes, the exact-version check fails and requires deliberate review. A passing repair run is required before release.
 
 ## External gates not completed locally
 
-- New public GitHub repository, authorized active account, owner/push rights, and post-push author/committer mapping.
+- Public repository and permission VERIFIED: xubowen1234/moontsinspect, ADMIN. Initial 21 commits map both author and committer to xubowen1234 in the GitHub API. Authentication is scoped per command process; global active account is not switched.
 - Green remote CI including native runtime tests and a release pointing to the tested commit.
-- Participant-confirmed name/contact and a strict-validated application with a real verified public repository URL.
+- Participant authorized reusing the previous MoonURI application identity/contact. Application is outside Git; its final claims must match the eventual tested release.
 - MoonCakes package publication (separate participant authorization/manual step).
 - Competition acceptance. Search evidence is not organizer approval.
 
