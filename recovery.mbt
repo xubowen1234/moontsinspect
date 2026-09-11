@@ -6,6 +6,7 @@ pub struct RecoveryReader {
   priv mut offset : Int64
   priv mut aligned : Bool
   priv mut closed : Bool
+  priv mut loss_reported : Bool
   priv mut skipped : Int
   priv scan_limit : Int
 }
@@ -23,6 +24,7 @@ pub fn RecoveryReader::new(
     aligned: false,
     closed: false,
     skipped: 0,
+    loss_reported: false,
     scan_limit,
   })
 }
@@ -43,6 +45,12 @@ pub fn RecoveryReader::feed(
     return
   }
   for b in bytes {
+    if self.offset > 9223372036854775243L {
+      self.closed = true
+      self.buffer.clear()
+      emit(Err(fault("offset_range", self.offset, None)))
+      return
+    }
     self.buffer.push(b)
     if self.aligned && self.buffer.length() == 188 {
       let result = parse_packet(
@@ -58,6 +66,7 @@ pub fn RecoveryReader::feed(
         }
         Err(_) => {
           self.aligned = false
+          self.loss_reported = true
           emit(Err(fault("sync_lost", self.offset, None)))
         }
       }
@@ -81,13 +90,15 @@ pub fn RecoveryReader::feed(
           emit(Err(fault("sync_recovered", self.offset, None)))
         }
         self.skipped = 0
+        self.loss_reported = false
         self.offset = self.offset + 564L
         self.buffer.clear()
         for p in packets {
           emit(Ok(p))
         }
       } else {
-        if self.skipped == 0 {
+        if !self.loss_reported {
+          self.loss_reported = true
           emit(Err(fault("sync_lost", self.offset, None)))
         }
         if self.skipped >= self.scan_limit {

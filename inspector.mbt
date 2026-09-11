@@ -226,6 +226,12 @@ fn Inspector::on_packet(
       if assembler is Some(a) {
         a.reset()
       }
+      if self.pes[p.pid] is Some(a) {
+        a.reset()
+      }
+      if self.clocks[p.pid] is Some(c) {
+        c.reset()
+      }
       emit(Issue(e))
       return
     }

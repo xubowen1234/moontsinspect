@@ -13,7 +13,7 @@ fn Inspector::rebuild_media(
           pcrs[pmt.pcr_pid] = true
         }
         for stream in pmt.streams {
-          if !wanted[stream.pid] {
+          if is_pes_stream(stream.stream_type) && !wanted[stream.pid] {
             if count >= 256 {
               emit(
                 Issue(
@@ -114,5 +114,15 @@ fn Inspector::observe_media(
         }
       },
     )
+  }
+}
+
+///|
+// Only declared PES families are routed to PES parsing. Private sections (5),
+// DSM-CC sections and unknown future stream types remain inventory-only.
+fn is_pes_stream(kind : Int) -> Bool {
+  match kind {
+    1 | 2 | 3 | 4 | 6 | 15 | 16 | 17 | 27 | 36 | 0x81 => true
+    _ => false
   }
 }

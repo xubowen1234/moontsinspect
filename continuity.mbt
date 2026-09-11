@@ -86,10 +86,13 @@ pub fn Continuity::observe(
       }
       if payload &&
         packet.continuity == old.continuity &&
-        !state.duplicated &&
         same_duplicate(old, packet, has_pcr) {
         self.states[pid] = Some({ previous: packet, duplicated: true })
-        Ok(Duplicate)
+        if state.duplicated {
+          Ok(Gap(expected~, actual=packet.continuity))
+        } else {
+          Ok(Duplicate)
+        }
       } else if packet.continuity == expected {
         Ok(Continuous)
       } else {
